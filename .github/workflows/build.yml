@@ -1,0 +1,134 @@
+name: Build v2rayN with CLI Cores (EasyTier / usque / NetBird)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    name: Build Windows (x64 + arm64)
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore v2rayN/v2rayN.sln
+        working-directory: v2rayN
+
+      - name: Build ServiceLib (sanity check)
+        run: dotnet build v2rayN/ServiceLib/ServiceLib.csproj --no-restore --configuration Release
+        working-directory: v2rayN
+
+      - name: Publish Windows x64
+        run: |
+          dotnet publish v2rayN/v2rayN/v2rayN.csproj `
+            -c Release `
+            -r win-x64 `
+            --self-contained false `
+            -p:PublishSingleFile=true `
+            -p:DebugType=embedded `
+            -o publish/win-x64
+        working-directory: v2rayN
+
+      - name: Publish Windows arm64
+        run: |
+          dotnet publish v2rayN/v2rayN/v2rayN.csproj `
+            -c Release `
+            -r win-arm64 `
+            --self-contained false `
+            -p:PublishSingleFile=true `
+            -p:DebugType=embedded `
+            -o publish/win-arm64
+        working-directory: v2rayN
+
+      - name: Package artifacts
+        run: |
+          Compress-Archive -Path publish/win-x64/* -DestinationPath v2rayN-cli-cores-win-x64.zip
+          Compress-Archive -Path publish/win-arm64/* -DestinationPath v2rayN-cli-cores-win-arm64.zip
+        working-directory: v2rayN
+
+      - name: Upload win-x64 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: v2rayN-cli-cores-win-x64
+          path: v2rayN/v2rayN-cli-cores-win-x64.zip
+          retention-days: 30
+
+      - name: Upload win-arm64 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: v2rayN-cli-cores-win-arm64
+          path: v2rayN/v2rayN-cli-cores-win-arm64.zip
+          retention-days: 30
+
+  build-linux:
+    name: Build Linux (x64 + arm64)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore v2rayN/v2rayN.sln
+        working-directory: v2rayN
+
+      - name: Publish Linux x64
+        run: |
+          dotnet publish v2rayN/v2rayN.Desktop/v2rayN.Desktop.csproj \
+            -c Release \
+            -r linux-x64 \
+            --self-contained false \
+            -p:PublishSingleFile=true \
+            -p:DebugType=embedded \
+            -o publish/linux-x64
+        working-directory: v2rayN
+
+      - name: Publish Linux arm64
+        run: |
+          dotnet publish v2rayN/v2rayN.Desktop/v2rayN.Desktop.csproj \
+            -c Release \
+            -r linux-arm64 \
+            --self-contained false \
+            -p:PublishSingleFile=true \
+            -p:DebugType=embedded \
+            -o publish/linux-arm64
+        working-directory: v2rayN
+
+      - name: Package artifacts
+        run: |
+          cd v2rayN
+          zip -r v2rayN-cli-cores-linux-x64.zip   publish/linux-x64/
+          zip -r v2rayN-cli-cores-linux-arm64.zip  publish/linux-arm64/
+
+      - name: Upload linux-x64 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: v2rayN-cli-cores-linux-x64
+          path: v2rayN/v2rayN-cli-cores-linux-x64.zip
+          retention-days: 30
+
+      - name: Upload linux-arm64 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: v2rayN-cli-cores-linux-arm64
+          path: v2rayN/v2rayN-cli-cores-linux-arm64.zip
+          retention-days: 30
