@@ -26,11 +26,9 @@ jobs:
 
       - name: Restore dependencies
         run: dotnet restore v2rayN/v2rayN.sln
-        working-directory: v2rayN
 
       - name: Build ServiceLib (sanity check)
         run: dotnet build v2rayN/ServiceLib/ServiceLib.csproj --no-restore --configuration Release
-        working-directory: v2rayN
 
       - name: Publish Windows x64
         run: |
@@ -41,7 +39,6 @@ jobs:
             -p:PublishSingleFile=true `
             -p:DebugType=embedded `
             -o publish/win-x64
-        working-directory: v2rayN
 
       - name: Publish Windows arm64
         run: |
@@ -52,26 +49,24 @@ jobs:
             -p:PublishSingleFile=true `
             -p:DebugType=embedded `
             -o publish/win-arm64
-        working-directory: v2rayN
 
       - name: Package artifacts
         run: |
-          Compress-Archive -Path publish/win-x64/* -DestinationPath v2rayN-cli-cores-win-x64.zip
+          Compress-Archive -Path publish/win-x64/*   -DestinationPath v2rayN-cli-cores-win-x64.zip
           Compress-Archive -Path publish/win-arm64/* -DestinationPath v2rayN-cli-cores-win-arm64.zip
-        working-directory: v2rayN
 
-      - name: Upload win-x64 artifact
+      - name: Upload win-x64
         uses: actions/upload-artifact@v4
         with:
           name: v2rayN-cli-cores-win-x64
-          path: v2rayN/v2rayN-cli-cores-win-x64.zip
+          path: v2rayN-cli-cores-win-x64.zip
           retention-days: 30
 
-      - name: Upload win-arm64 artifact
+      - name: Upload win-arm64
         uses: actions/upload-artifact@v4
         with:
           name: v2rayN-cli-cores-win-arm64
-          path: v2rayN/v2rayN-cli-cores-win-arm64.zip
+          path: v2rayN-cli-cores-win-arm64.zip
           retention-days: 30
 
   build-linux:
@@ -89,7 +84,6 @@ jobs:
 
       - name: Restore dependencies
         run: dotnet restore v2rayN/v2rayN.sln
-        working-directory: v2rayN
 
       - name: Publish Linux x64
         run: |
@@ -100,7 +94,6 @@ jobs:
             -p:PublishSingleFile=true \
             -p:DebugType=embedded \
             -o publish/linux-x64
-        working-directory: v2rayN
 
       - name: Publish Linux arm64
         run: |
@@ -111,24 +104,22 @@ jobs:
             -p:PublishSingleFile=true \
             -p:DebugType=embedded \
             -o publish/linux-arm64
-        working-directory: v2rayN
 
       - name: Package artifacts
         run: |
-          cd v2rayN
-          zip -r v2rayN-cli-cores-linux-x64.zip   publish/linux-x64/
-          zip -r v2rayN-cli-cores-linux-arm64.zip  publish/linux-arm64/
+          zip -r v2rayN-cli-cores-linux-x64.zip  publish/linux-x64/
+          zip -r v2rayN-cli-cores-linux-arm64.zip publish/linux-arm64/
 
-      - name: Upload linux-x64 artifact
+      - name: Upload linux-x64
         uses: actions/upload-artifact@v4
         with:
           name: v2rayN-cli-cores-linux-x64
-          path: v2rayN/v2rayN-cli-cores-linux-x64.zip
+          path: v2rayN-cli-cores-linux-x64.zip
           retention-days: 30
 
-      - name: Upload linux-arm64 artifact
+      - name: Upload linux-arm64
         uses: actions/upload-artifact@v4
         with:
           name: v2rayN-cli-cores-linux-arm64
-          path: v2rayN/v2rayN-cli-cores-linux-arm64.zip
+          path: v2rayN-cli-cores-linux-arm64.zip
           retention-days: 30
