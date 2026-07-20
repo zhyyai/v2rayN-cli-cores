@@ -87,7 +87,7 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore v2rayN/v2rayN.sln
+        run: dotnet restore v2rayN/v2rayN.Desktop/v2rayN.Desktop.csproj
 
       - name: Publish Linux x64
         run: |
