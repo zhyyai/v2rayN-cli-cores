@@ -56,14 +56,14 @@ jobs:
           Compress-Archive -Path publish/win-arm64/* -DestinationPath v2rayN-cli-cores-win-arm64.zip
 
       - name: Upload win-x64
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: v2rayN-cli-cores-win-x64
           path: v2rayN-cli-cores-win-x64.zip
           retention-days: 30
 
       - name: Upload win-arm64
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: v2rayN-cli-cores-win-arm64
           path: v2rayN-cli-cores-win-arm64.zip
@@ -111,14 +111,14 @@ jobs:
           zip -r v2rayN-cli-cores-linux-arm64.zip publish/linux-arm64/
 
       - name: Upload linux-x64
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: v2rayN-cli-cores-linux-x64
           path: v2rayN-cli-cores-linux-x64.zip
           retention-days: 30
 
       - name: Upload linux-arm64
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: v2rayN-cli-cores-linux-arm64
           path: v2rayN-cli-cores-linux-arm64.zip
